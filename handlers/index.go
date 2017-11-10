@@ -18,7 +18,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		r.ParseMultipartForm(2048)
 		files := r.MultipartForm.File["myfiles"]
 		for _, fheader := range files {
-			go copyFiles(fheader)
+			copyFiles(fheader)
 		}
 
 	}
