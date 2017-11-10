@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"./handlers"
+	"github.com/ConradPacesa/gif-maker/handlers"
 )
 
 func main() {
