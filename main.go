@@ -1,15 +1,12 @@
 package main
 
 import (
-	"io"
 	"net/http"
+
+	"./handlers"
 )
 
 func main() {
-	http.HandleFunc("/", index)
+	http.HandleFunc("/", handlers.Index)
 	http.ListenAndServe(":80", nil)
-}
-
-func index(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "Testing from Docker.")
 }
