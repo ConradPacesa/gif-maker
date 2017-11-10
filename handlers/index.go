@@ -8,9 +8,12 @@ import (
 
 // Index handles the '/' request
 func Index(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, http.StatusText(405), 405)
-		return
+	if r.Method == "GET" {
+		config.TPL.ExecuteTemplate(w, "index.html", nil)
 	}
-	config.TPL.ExecuteTemplate(w, "index.html", nil)
+
+	if r.Method == "POST" {
+		// TODO take in photo
+	}
+
 }
