@@ -95,7 +95,7 @@ func convertToGif() {
 		outGif.Delay = append(outGif.Delay, 0)
 	}
 
-	gifPath := filepath.Join(dir, "gifs", "output.gif")
+	gifPath := filepath.Join(dir, "public", "gif", "output.gif")
 	f, _ := os.OpenFile(gifPath, os.O_WRONLY|os.O_CREATE, 0600)
 	defer f.Close()
 	gif.EncodeAll(f, outGif)
