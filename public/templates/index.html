@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>GIF Maker</title>
+  </head>
+  <body>
+    <h1>This is an app to make your own GIF's.</h1>
+    <img src="/public/gif/output.gif" id="gif" >
+    <a href="/public/gif/output.gif" download id="download" style="visibility: hidden">download</a>
+    <p>Upload your image here.</p>
+  </br>
+    <form method="post" enctype="multipart/form-data">
+      <input type="file" name="myfiles" multiple="multiple">
+      <input type="submit">
+    </form>
+  </body>
+  <script>
+    function ImgExists(url) {
+        var http = new XMLHttpRequest();
+        http.open('HEAD', url, false);
+        http.send();
+        return http.status != 404;
+    }
+
+    var download = document.getElementById('download');
+    if (ImgExists('/public/gif/output.gif')) {
+        download.style.visibility = 'visible';
+    }
+
+  </script>
+</html>
