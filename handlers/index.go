@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/ConradPacesa/gif-maker/config"
 )
@@ -28,6 +29,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		convertToGif()
 	}
 	config.TPL.ExecuteTemplate(w, "index.html", nil)
+	clearFiles()
 }
 
 func copyFiles(fh *multipart.FileHeader) {
@@ -64,7 +66,6 @@ func convertToGif() {
 		files = append(files, path)
 		return nil
 	})
-	//fmt.Println(files)
 
 	gifFiles := []string{}
 	for i, name := range files[2:] {
@@ -82,9 +83,10 @@ func convertToGif() {
 		f, _ = os.Create(filepath.Join(dir, "gifs", fn))
 		gif.Encode(f, t, nil)
 		gifFiles = append(gifFiles, filepath.Join(dir, "gifs", fn))
+		f.Close()
+		os.Remove(name)
 	}
 
-	//fmt.Println(gifFiles)
 	outGif := &gif.GIF{}
 	for _, name := range gifFiles {
 		f, _ := os.Open(name)
@@ -99,4 +101,51 @@ func convertToGif() {
 	f, _ := os.OpenFile(gifPath, os.O_WRONLY|os.O_CREATE, 0600)
 	defer f.Close()
 	gif.EncodeAll(f, outGif)
+	f.Close()
+}
+
+func clearFiles() {
+	gifFiles := []string{}
+
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	gifDir := filepath.Join(dir, "gifs")
+	if err != nil {
+		fmt.Println(err)
+	}
+	filepath.Walk(gifDir, func(path string, f os.FileInfo, err error) error {
+		if strings.HasSuffix(path, ".gif") || strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".png") || strings.HasSuffix(path, ".jpeg") {
+			gifFiles = append(gifFiles, path)
+		}
+		return nil
+	})
+
+	for _, path := range gifFiles {
+		err := os.Remove(path)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	// imgFiles := []string{}
+
+	// imgDir := filepath.Join(dir, "gifs", "pics")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// filepath.Walk(imgDir, func(path string, f os.FileInfo, err error) error {
+	// 	if strings.HasSuffix(path, ".gif") || strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".png") || strings.HasSuffix(path, ".jpeg") {
+	// 		imgFiles = append(imgFiles, path)
+	// 	}
+	// 	return nil
+	// })
+	// //fmt.Println(imgFiles)
+	// for _, path := range imgFiles {
+	// 	err := os.Remove(path)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// }
 }
