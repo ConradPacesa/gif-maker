@@ -20,6 +20,7 @@ import (
 // Index handles the '/' request
 func Index(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
+		clearFiles()
 		// process form submission
 		r.ParseMultipartForm(2048)
 		files := r.MultipartForm.File["myfiles"]
@@ -52,6 +53,8 @@ func copyFiles(fh *multipart.FileHeader) {
 	defer newFile.Close()
 	file.Seek(0, 0)
 	io.Copy(newFile, file)
+	file.Close()
+	newFile.Close()
 }
 
 func convertToGif() {
@@ -129,23 +132,26 @@ func clearFiles() {
 		}
 	}
 
-	// imgFiles := []string{}
+	imgFiles := []string{}
 
-	// imgDir := filepath.Join(dir, "gifs", "pics")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// filepath.Walk(imgDir, func(path string, f os.FileInfo, err error) error {
-	// 	if strings.HasSuffix(path, ".gif") || strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".png") || strings.HasSuffix(path, ".jpeg") {
-	// 		imgFiles = append(imgFiles, path)
-	// 	}
-	// 	return nil
-	// })
-	// //fmt.Println(imgFiles)
-	// for _, path := range imgFiles {
-	// 	err := os.Remove(path)
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 	}
-	// }
+	imgDir := filepath.Join(dir, "gifs", "pics")
+	if err != nil {
+		fmt.Println(err)
+	}
+	filepath.Walk(imgDir, func(path string, f os.FileInfo, err error) error {
+		if strings.HasSuffix(path, ".gif") || strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".png") || strings.HasSuffix(path, ".jpeg") {
+			imgFiles = append(imgFiles, path)
+		}
+		return nil
+	})
+	//fmt.Println(imgFiles)
+	for _, path := range imgFiles {
+		err := os.Remove(path)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	// pubGif := filepath.Join(dir, "public", "gif", "output.gif")
+	// os.Remove(pubGif)
 }
