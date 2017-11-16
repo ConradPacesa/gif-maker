@@ -20,7 +20,6 @@ import (
 // Index handles the '/' request
 func Index(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		clearFiles()
 		// process form submission
 		r.ParseMultipartForm(2048)
 		files := r.MultipartForm.File["myfiles"]
@@ -87,7 +86,6 @@ func convertToGif() {
 		gif.Encode(f, t, nil)
 		gifFiles = append(gifFiles, filepath.Join(dir, "gifs", fn))
 		f.Close()
-		os.Remove(name)
 	}
 
 	outGif := &gif.GIF{}
@@ -144,7 +142,6 @@ func clearFiles() {
 		}
 		return nil
 	})
-	//fmt.Println(imgFiles)
 	for _, path := range imgFiles {
 		err := os.Remove(path)
 		if err != nil {
@@ -152,6 +149,4 @@ func clearFiles() {
 		}
 	}
 
-	// pubGif := filepath.Join(dir, "public", "gif", "output.gif")
-	// os.Remove(pubGif)
 }
