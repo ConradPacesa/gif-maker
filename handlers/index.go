@@ -52,6 +52,8 @@ func copyFiles(fh *multipart.FileHeader) {
 	defer newFile.Close()
 	file.Seek(0, 0)
 	io.Copy(newFile, file)
+	file.Close()
+	newFile.Close()
 }
 
 func convertToGif() {
@@ -84,7 +86,6 @@ func convertToGif() {
 		gif.Encode(f, t, nil)
 		gifFiles = append(gifFiles, filepath.Join(dir, "gifs", fn))
 		f.Close()
-		os.Remove(name)
 	}
 
 	outGif := &gif.GIF{}
@@ -129,23 +130,23 @@ func clearFiles() {
 		}
 	}
 
-	// imgFiles := []string{}
+	imgFiles := []string{}
 
-	// imgDir := filepath.Join(dir, "gifs", "pics")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// filepath.Walk(imgDir, func(path string, f os.FileInfo, err error) error {
-	// 	if strings.HasSuffix(path, ".gif") || strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".png") || strings.HasSuffix(path, ".jpeg") {
-	// 		imgFiles = append(imgFiles, path)
-	// 	}
-	// 	return nil
-	// })
-	// //fmt.Println(imgFiles)
-	// for _, path := range imgFiles {
-	// 	err := os.Remove(path)
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 	}
-	// }
+	imgDir := filepath.Join(dir, "gifs", "pics")
+	if err != nil {
+		fmt.Println(err)
+	}
+	filepath.Walk(imgDir, func(path string, f os.FileInfo, err error) error {
+		if strings.HasSuffix(path, ".gif") || strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".png") || strings.HasSuffix(path, ".jpeg") {
+			imgFiles = append(imgFiles, path)
+		}
+		return nil
+	})
+	for _, path := range imgFiles {
+		err := os.Remove(path)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 }
